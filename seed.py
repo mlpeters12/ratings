@@ -17,7 +17,7 @@ def load_users():
 
     # Delete all rows in table, so if we need to run this a second time,
     # we won't be trying to add duplicate users
-    User.query.delete()
+    # User.query.delete()
 
     # Read u.user file and insert data
     for row in open("seed_data/u.user"):
@@ -42,10 +42,10 @@ def load_movies():
 
     # Delete all rows in table, so if we need to run this a second time,
     # we won't be trying to add duplicate users
-    Movie.query.delete()
+    # Movie.query.delete()
 
     # Read u.user file and insert data
-    for row in open("seed_data/u.item"):
+    for i, row in enumerate(open("seed_data/u.item")):
         row_list = row.rstrip(" ")
         row_list2 = row_list.split("|")
 
@@ -59,9 +59,7 @@ def load_movies():
         else:
             released_at = None
 
-        return released_at
-
-        new_title = title.rstrip(title[-6:])
+        new_title = title.rstrip(title[-7:])
 
         movie = Movie(movie_id=movie_id,
                         title=new_title,
@@ -71,6 +69,8 @@ def load_movies():
         # We need to add to the session or it won't ever be stored
         db.session.add(movie)
 
+        if i % 100 ==0:
+            print i
     # Once we're done, we should commit our work
     db.session.commit()
 
@@ -85,9 +85,13 @@ def load_ratings():
     Rating.query.delete()
 
     # Read u.user file and insert data
-    for row in open("seed_data/u.data"):
+    for i, row in enumerate(open("seed_data/u.data")):
         row = row.rstrip()
         user_id, movie_id, score, timestamp = row.split("\t")
+
+        user_id = int(user_id)
+        movie_id = int(movie_id)
+        score = int(score)
 
         rating = Rating(movie_id=movie_id,
                         user_id=user_id,
@@ -95,6 +99,11 @@ def load_ratings():
 
         # We need to add to the session or it won't ever be stored
         db.session.add(rating)
+
+        if i % 1000 == 0:
+            print i
+
+            db.session.commit()
 
     # Once we're done, we should commit our work
     db.session.commit()
