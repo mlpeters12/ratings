@@ -46,25 +46,22 @@ def load_movies():
 
     # Read u.user file and insert data
     for row in open("seed_data/u.item"):
-        row_list = row.rstrip()
-        # movie_id, title, released_at, video_release_date, imdb_url, unknown, action, adventure, animation,
-        # childrens, comedy, crime, documentary, drama, fantasy, filmnoir, horror, musical, romance, scifi, 
-        # thriller, war, western 
-        movie_id = row_list[0]
-        title = row_list[1]
-        released_str = row_list[2]
-        imdb_url = row_list[4]
+        row_list = row.rstrip(" ")
+        row_list2 = row_list.split("|")
+
+        movie_id = row_list2[0]
+        title = row_list2[1]
+        released_str = row_list2[2]
+        imdb_url = row_list2[4]
 
         if released_str:
             released_at = datetime.strptime(released_str, "%d-%b-%Y")
         else:
             released_at = None
 
-        new_title = title.rstrip(title[-6:])
+        return released_at
 
-        print title
-        print new_title
-        print released_at
+        new_title = title.rstrip(title[-6:])
 
         movie = Movie(movie_id=movie_id,
                         title=new_title,
@@ -72,7 +69,6 @@ def load_movies():
                         imdb_url=imdb_url)
 
         # We need to add to the session or it won't ever be stored
-        print movie
         db.session.add(movie)
 
     # Once we're done, we should commit our work
