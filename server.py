@@ -40,6 +40,7 @@ def login_form():
 
 @app.route("/login-form", methods=["POST"])
 def process_login():
+    """processes login info"""
 
     email = request.form.get("email")
     password = request.form.get("password")
@@ -49,8 +50,11 @@ def process_login():
 
 
     if not user:
-        flash("Invalid Credentials")
-        return redirect("/login-form")
+        new_user = User(email=email, password=password)
+        db.session.add(new_user)
+        db.session.commit()
+        flash("New user logged in!")
+        return redirect("/")
 
     if user.password != password:
         flash("Incorrect Password")
@@ -58,21 +62,33 @@ def process_login():
 
     session["user_id"]= user.user_id
     flash("Successfully Logged In")
-    return redirect("/login-form")
+    return redirect("/")
 
-    # if input_email == email:
-    #     if input_password == password:
-    #         flash('SUCCESS IS YOURS! LOGIN COMPLETE')
-    #     else:
-    #         flash('Invalid Credentials, dummy.')
 
-    # else:
-    #     new_user = User(email = input_email, password = input_password)
-    #     db.session.add(new_user)
-    #     db.session.commit()
-    #     flash('New Account Created! BITCH')
-    # return redirect("/login-form")
-            
+@app.route("/logout")
+def logout():
+    """logs user out"""
+    
+    del session["user_id"]        
+    flash("You're logged out, loser.")
+    return redirect("/")
+
+@app.route("/users/<int:user_id>", methods=["GET"])
+def user_page(user_id):
+    """Show user page"""
+
+    user_info = db.session.query(User,
+                                Rating).join(Rating).all()
+    # movie_info = db.session.query(Rating,
+    #                                 Movie).join(Movie).all()
+
+    for user, rating in user_info:
+        print user_id, user.age, user.zipcode
+
+    # for rating, movie in movie_info:
+        # print rating.score, movie.title
+
+    # return render_template("user_list.html", users=users)
    
 
 
