@@ -38,24 +38,60 @@ def login_form():
     return render_template("login_form.html")
 
 
-@app.route("/profile-page", methods=["POST"])
+@app.route("/login-form", methods=["POST"])
 def process_login():
 
-    input_email = request.form.get("email")
-    input_password = request.form.get("password")
-
-    user_information = User.query.(User.id, User.email, User.password).all()
+    email = request.form.get("email")
+    password = request.form.get("password")
 
 
-    for user in user table:
-        if username == username:
-            if password == password:
-                return render_template(profilepage.html)
-            else:
-                return alert
-        else:
-            create new username in database and db.session.commit()
-            return render_template(profilepage.html)
+    user = User.query.filter_by(email=email).first()
+
+
+    if not user:
+        flash("Invalid Credentials")
+        return redirect("/login-form")
+
+    if user.password != password:
+        flash("Incorrect Password")
+        return redirect("/login-form")
+
+    session["user_id"]= user.user_id
+    flash("Successfully Logged In")
+    return redirect("/login-form")
+
+    # if input_email == email:
+    #     if input_password == password:
+    #         flash('SUCCESS IS YOURS! LOGIN COMPLETE')
+    #     else:
+    #         flash('Invalid Credentials, dummy.')
+
+    # else:
+    #     new_user = User(email = input_email, password = input_password)
+    #     db.session.add(new_user)
+    #     db.session.commit()
+    #     flash('New Account Created! BITCH')
+    # return redirect("/login-form")
+            
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the point
