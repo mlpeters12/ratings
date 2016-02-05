@@ -73,22 +73,15 @@ def logout():
     flash("You're logged out, loser.")
     return redirect("/")
 
-@app.route("/users/<int:user_id>", methods=["GET"])
+@app.route("/users/<user_id>", methods=["GET"])
 def user_page(user_id):
     """Show user page"""
 
-    user_info = db.session.query(User,
-                                Rating).join(Rating).all()
-    # movie_info = db.session.query(Rating,
-    #                                 Movie).join(Movie).all()
 
-    for user, rating in user_info:
-        print user_id, user.age, user.zipcode
-
-    # for rating, movie in movie_info:
-        # print rating.score, movie.title
-
-    # return render_template("user_list.html", users=users)
+    user_info = User.query.filter_by(user_id=user_id).one()
+    ratings = user_info.ratings
+    
+    return render_template("user_detail.html", user_info=user_info, ratings=ratings)
    
 
 
