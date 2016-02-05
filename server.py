@@ -82,6 +82,13 @@ def user_page(user_id):
     ratings = user_info.ratings
     
     return render_template("user_detail.html", user_info=user_info, ratings=ratings)
+
+@app.route("/movies")
+def movie_list():
+    """Show list of users."""
+
+    movies = Movie.query.all()
+    return render_template("movie_list.html", movies=movies)
    
 
 
