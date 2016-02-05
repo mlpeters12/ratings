@@ -87,23 +87,34 @@ def user_page(user_id):
 def movie_list():
     """Show list of users."""
 
-    movies = Movie.query.all()
+    movies = Movie.query.order_by(Movie.title).all()
+
+
     return render_template("movie_list.html", movies=movies)
-   
 
 
+@app.route("/movies/<movie_id>", methods=["GET"])
+def movie_page(movie_id):
+    """Show user page"""
 
+    movie_info = Movie.query.filter_by(movie_id=movie_id).one()
+    ratings = movie_info.ratings
 
+    if session["user_id"]:
+        score = request.args.get("score")
+        movie_id = request.args.get("movie_id")
+        user_id = request.args.get("user_id")
 
+        new_rating = Rating(user_id=user_id, movie_id=movie_id, score=score)
+        db.session.add(new_rating)
+        db.session.commit()
+        flash("Your rating was submitted")
+        return redirect("/movies/<movie_id>")
+    else:
+    #     flash("You have to login to do that!")
+        redirect("/")
 
-
-
-
-
-
-
-
-
+    return render_template("movie_detail.html", movie_info=movie_info, ratings=ratings)
 
 
 
